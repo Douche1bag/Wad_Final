@@ -2,11 +2,23 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import Customer from '@/models/Customer';
 
-// GET - Get single customer by ID
+// GET - Get single customer by member number or ID
 export async function GET(request, { params }) {
   try {
     await dbConnect();
-    const customer = await Customer.findById(params.id);
+    
+    // Try to parse as member number first
+    const memberNumber = parseInt(params.id);
+    let customer;
+    
+    if (!isNaN(memberNumber)) {
+      // Look up by member number
+      customer = await Customer.findOne({ memberNumber: memberNumber });
+    } else {
+      // Fallback to MongoDB ID lookup
+      customer = await Customer.findById(params.id);
+    }
+    
     if (!customer) {
       return NextResponse.json({ error: 'Customer not found' }, { status: 404 });
     }
@@ -16,12 +28,28 @@ export async function GET(request, { params }) {
   }
 }
 
-// PUT - Update customer
+// PUT - Update customer by member number or ID
 export async function PUT(request, { params }) {
   try {
     await dbConnect();
     const body = await request.json();
-    const customer = await Customer.findByIdAndUpdate(params.id, body, { new: true });
+    
+    // Try to parse as member number first
+    const memberNumber = parseInt(params.id);
+    let customer;
+    
+    if (!isNaN(memberNumber)) {
+      // Look up by member number
+      customer = await Customer.findOneAndUpdate(
+        { memberNumber: memberNumber }, 
+        body, 
+        { new: true }
+      );
+    } else {
+      // Fallback to MongoDB ID lookup
+      customer = await Customer.findByIdAndUpdate(params.id, body, { new: true });
+    }
+    
     if (!customer) {
       return NextResponse.json({ error: 'Customer not found' }, { status: 404 });
     }
@@ -34,11 +62,23 @@ export async function PUT(request, { params }) {
   }
 }
 
-// DELETE - Delete customer
+// DELETE - Delete customer by member number or ID
 export async function DELETE(request, { params }) {
   try {
     await dbConnect();
-    const customer = await Customer.findByIdAndDelete(params.id);
+    
+    // Try to parse as member number first
+    const memberNumber = parseInt(params.id);
+    let customer;
+    
+    if (!isNaN(memberNumber)) {
+      // Look up by member number
+      customer = await Customer.findOneAndDelete({ memberNumber: memberNumber });
+    } else {
+      // Fallback to MongoDB ID lookup
+      customer = await Customer.findByIdAndDelete(params.id);
+    }
+    
     if (!customer) {
       return NextResponse.json({ error: 'Customer not found' }, { status: 404 });
     }

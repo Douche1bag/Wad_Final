@@ -19,9 +19,19 @@ export async function POST(request) {
     await dbConnect();
     const body = await request.json();
     
-    // Auto-generate member number
-    const lastCustomer = await Customer.findOne({}, {}, { sort: { memberNumber: -1 } });
-    const nextMemberNumber = lastCustomer ? lastCustomer.memberNumber + 1 : 1;
+    // Auto-generate member number (fill gaps in sequence)
+    const customers = await Customer.find({}).sort({ memberNumber: 1 });
+    let nextMemberNumber = 1;
+    
+    // Find the first gap in the sequence
+    for (const customer of customers) {
+      if (customer.memberNumber === nextMemberNumber) {
+        nextMemberNumber++;
+      } else if (customer.memberNumber > nextMemberNumber) {
+        // Found a gap, use this number
+        break;
+      }
+    }
     
     const customerData = {
       ...body,
