@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const customerSchema = new mongoose.Schema({
-  model: {
+  Name: {
     type: String,
     required: true
   },

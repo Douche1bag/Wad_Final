@@ -1,0 +1,103 @@
+Customer Management System - CRUD API Documentation
+
+2. Design the CRUD API in an MS Word file with the following pattern for all CRUD operations.
+
+## 1. Read All Customers
+
+| Field           | Value                               |
+| :-------------- | :---------------------------------- |
+| Route           | `GET /api/customer`                 |
+| Payload (body)  | `-`                                 |
+| Response        | `[{ "Name": "John", "dateOfBirth": "1990-05-15T00:00:00.000Z", "memberNumber": 1, "interest": "movies", "_id": "..." }, { ... }]` |
+| File            | `/app/api/customer/route.js`        |
+| Test            | `curl -X GET http://localhost:3000/api/customer` |
+
+## 2. Read Single Customer
+
+| Field           | Value                               |
+| :-------------- | :---------------------------------- |
+| Route           | `GET /api/customer/[memberNumber]`  |
+| Payload (body)  | `-`                                 |
+| Response        | `{ "Name": "John", "dateOfBirth": "1990-05-15T00:00:00.000Z", "memberNumber": 1, "interest": "movies", "_id": "..." }` |
+| File            | `/app/api/customer/[id]/route.js`   |
+| Test            | `curl -X GET http://localhost:3000/api/customer/1` |
+
+## 3. Create New Customer
+
+| Field           | Value                               |
+| :-------------- | :---------------------------------- |
+| Route           | `POST /api/customer`                |
+| Payload (body)  | `{ "Name": "John", "dateOfBirth": "1990-05-15", "interest": "movies" }` |
+| Response        | `{ "Name": "John", "dateOfBirth": "1990-05-15T00:00:00.000Z", "memberNumber": 1, "interest": "movies", "_id": "..." }` |
+| File            | `/app/api/customer/route.js`        |
+| Test            | `curl -X POST http://localhost:3000/api/customer -H "Content-Type: application/json" -d '{"Name":"John","dateOfBirth":"1990-05-15","interest":"movies"}'` |
+
+## 4. Update Customer
+
+| Field           | Value                               |
+| :-------------- | :---------------------------------- |
+| Route           | `PUT /api/customer/[memberNumber]`  |
+| Payload (body)  | `{ "Name": "John", "dateOfBirth": "1990-05-15", "interest": "gaming" }` |
+| Response        | `{ "Name": "John", "dateOfBirth": "1990-05-15T00:00:00.000Z", "memberNumber": 1, "interest": "gaming", "_id": "..." }` |
+| File            | `/app/api/customer/[id]/route.js`   |
+| Test            | `curl -X PUT http://localhost:3000/api/customer/1 -H "Content-Type: application/json" -d '{"Name":"John","dateOfBirth":"1990-05-15","interest":"gaming"}'` |
+
+## 5. Delete Customer
+
+| Field           | Value                               |
+| :-------------- | :---------------------------------- |
+| Route           | `DELETE /api/customer/[memberNumber]` |
+| Payload (body)  | `-`                                 |
+| Response        | `{ "message": "Customer deleted successfully" }` |
+| File            | `/app/api/customer/[id]/route.js`   |
+| Test            | `curl -X DELETE http://localhost:3000/api/customer/1` |
+
+## Customer Model Schema
+
+```javascript
+{
+  Name: String (required),
+  dateOfBirth: Date (required),
+  memberNumber: Number (auto-generated, unique),
+  interest: String (required)
+}
+```
+
+## Error Responses
+
+### 400 Bad Request
+```json
+{
+  "error": "Member number already exists"
+}
+```
+
+### 404 Not Found
+```json
+{
+  "error": "Customer not found"
+}
+```
+
+### 500 Internal Server Error
+```json
+{
+  "error": "Failed to fetch customers"
+}
+```
+
+## Base URL
+- Development: `http://localhost:3000`
+- Production: `https://your-domain.com`
+
+## Authentication
+Currently no authentication required. All endpoints are publicly accessible.
+
+## Rate Limiting
+No rate limiting implemented in current version.
+
+## Content-Type
+All POST and PUT requests must include:
+```
+Content-Type: application/json
+```
